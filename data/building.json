@@ -1,0 +1,34 @@
+ {
+  "nodes": [
+    {
+      "id": "A",
+      "type": "room",
+      "name": "Sala de conferencias",
+      "coordinates": [0, 0]
+    },
+    {
+      "id": "B",
+      "type": "corridor",
+      "name": "Pasillo principal",
+      "coordinates": [1, 0]
+    },
+    {
+      "id": "C",
+      "type": "exit",
+      "name": "Salida de emergencia",
+      "coordinates": [2, 0]
+    }
+  ],
+  "edges": [
+    {
+      "from": "A",
+      "to": "B",
+      "distance": 10
+    },
+    {
+      "from": "B",
+      "to": "C",
+      "distance": 15
+    }
+  ]
+}
