@@ -1,34 +1,202 @@
- {
+{
+  "building": {
+    "name": "Edificio Académico Central",
+    "levels": 2
+  },
   "nodes": [
     {
-      "id": "A",
+      "id": "A101",
+      "label": "Aula 101",
       "type": "room",
-      "name": "Sala de conferencias",
-      "coordinates": [0, 0]
+      "level": 1
     },
     {
-      "id": "B",
-      "type": "corridor",
-      "name": "Pasillo principal",
-      "coordinates": [1, 0]
+      "id": "A102",
+      "label": "Aula 102",
+      "type": "room",
+      "level": 1
     },
     {
-      "id": "C",
+      "id": "A103",
+      "label": "Laboratorio 103",
+      "type": "room",
+      "level": 1
+    },
+    {
+      "id": "P1N",
+      "label": "Pasillo Norte - Piso 1",
+      "type": "hallway",
+      "level": 1
+    },
+    {
+      "id": "P1S",
+      "label": "Pasillo Sur - Piso 1",
+      "type": "hallway",
+      "level": 1
+    },
+    {
+      "id": "E1",
+      "label": "Escalera Principal",
+      "type": "staircase",
+      "level": 1
+    },
+    {
+      "id": "E2",
+      "label": "Escalera de Emergencia",
+      "type": "staircase",
+      "level": 1
+    },
+    {
+      "id": "S1",
+      "label": "Salida Principal (Norte)",
       "type": "exit",
-      "name": "Salida de emergencia",
-      "coordinates": [2, 0]
+      "level": 1
+    },
+    {
+      "id": "S2",
+      "label": "Salida de Emergencia (Sur)",
+      "type": "exit",
+      "level": 1
+    },
+    {
+      "id": "A201",
+      "label": "Aula 201",
+      "type": "room",
+      "level": 2
+    },
+    {
+      "id": "A202",
+      "label": "Aula 202",
+      "type": "room",
+      "level": 2
+    },
+    {
+      "id": "A203",
+      "label": "Sala de Reuniones 203",
+      "type": "room",
+      "level": 2
+    },
+    {
+      "id": "P2N",
+      "label": "Pasillo Norte - Piso 2",
+      "type": "hallway",
+      "level": 2
+    },
+    {
+      "id": "P2S",
+      "label": "Pasillo Sur - Piso 2",
+      "type": "hallway",
+      "level": 2
+    },
+    {
+      "id": "E1_2",
+      "label": "Escalera Principal (Piso 2)",
+      "type": "staircase",
+      "level": 2
+    },
+    {
+      "id": "E2_2",
+      "label": "Escalera de Emergencia (Piso 2)",
+      "type": "staircase",
+      "level": 2
     }
   ],
   "edges": [
     {
-      "from": "A",
-      "to": "B",
-      "distance": 10
+      "from": "A101",
+      "to": "P1N",
+      "weight": 1,
+      "description": "Puerta Aula 101 al pasillo norte"
     },
     {
-      "from": "B",
-      "to": "C",
-      "distance": 15
+      "from": "A102",
+      "to": "P1N",
+      "weight": 1,
+      "description": "Puerta Aula 102 al pasillo norte"
+    },
+    {
+      "from": "A103",
+      "to": "P1S",
+      "weight": 1,
+      "description": "Puerta Laboratorio al pasillo sur"
+    },
+    {
+      "from": "P1N",
+      "to": "P1S",
+      "weight": 2,
+      "description": "Conexión entre pasillos norte y sur (piso 1)"
+    },
+    {
+      "from": "P1N",
+      "to": "E1",
+      "weight": 1,
+      "description": "Pasillo norte a escalera principal"
+    },
+    {
+      "from": "P1S",
+      "to": "E2",
+      "weight": 1,
+      "description": "Pasillo sur a escalera de emergencia"
+    },
+    {
+      "from": "P1N",
+      "to": "S1",
+      "weight": 1,
+      "description": "Pasillo norte a salida principal"
+    },
+    {
+      "from": "P1S",
+      "to": "S2",
+      "weight": 1,
+      "description": "Pasillo sur a salida de emergencia"
+    },
+    {
+      "from": "E1",
+      "to": "E1_2",
+      "weight": 3,
+      "description": "Escalera principal entre piso 1 y piso 2"
+    },
+    {
+      "from": "E2",
+      "to": "E2_2",
+      "weight": 3,
+      "description": "Escalera de emergencia entre piso 1 y piso 2"
+    },
+    {
+      "from": "A201",
+      "to": "P2N",
+      "weight": 1,
+      "description": "Puerta Aula 201 al pasillo norte"
+    },
+    {
+      "from": "A202",
+      "to": "P2N",
+      "weight": 1,
+      "description": "Puerta Aula 202 al pasillo norte"
+    },
+    {
+      "from": "A203",
+      "to": "P2S",
+      "weight": 1,
+      "description": "Puerta Sala de Reuniones al pasillo sur"
+    },
+    {
+      "from": "P2N",
+      "to": "P2S",
+      "weight": 2,
+      "description": "Conexión entre pasillos norte y sur (piso 2)"
+    },
+    {
+      "from": "P2N",
+      "to": "E1_2",
+      "weight": 1,
+      "description": "Pasillo norte piso 2 a escalera principal"
+    },
+    {
+      "from": "P2S",
+      "to": "E2_2",
+      "weight": 1,
+      "description": "Pasillo sur piso 2 a escalera de emergencia"
     }
   ]
 }
