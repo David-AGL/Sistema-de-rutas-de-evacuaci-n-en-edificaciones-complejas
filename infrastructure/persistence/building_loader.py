@@ -97,8 +97,6 @@ class BuildingLoader:
             )
             graph.add_node(node)
 
-        print(f"  ✔ {len(nodes_data)} nodos cargados.")
-
     def _load_edges(self, raw: dict, graph: Graph):
         """
         Recorre la lista 'edges' del JSON y agrega cada arista al grafo.
@@ -137,5 +135,3 @@ class BuildingLoader:
                 description=item.get("description", "")
             )
             graph.add_edge(edge)
-
-        print(f"  ✔ {len(edges_data)} aristas cargadas (bidireccionales).")
