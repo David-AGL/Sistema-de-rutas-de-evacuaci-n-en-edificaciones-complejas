@@ -173,23 +173,31 @@ def formato_tabla(metricas: list[RouteMetrics]) -> str:
         return "  (sin rutas para comparar)"
 
     # Encabezado
-    col_ruta = 36
+    # Usar ancho amplio + ASCII evita corrimientos visuales en algunas terminales.
+    col_ruta = 50
     lineas = [
         f"  {'#':<3} {'Ruta':<{col_ruta}} {'Costo':>5}  {'Pasos':>5}  "
         f"{'Escal.':>6}  {'Efic.':>5}  Salida",
-        "  " + "─" * 78,
+        "  " + "-" * (col_ruta + 35),
     ]
 
     for m in metricas:
-        ruta_ids = " → ".join(m.route.path)
+        path = m.route.path if isinstance(m.route.path, list) else []
+        ruta_ids = " -> ".join(path)
         # Truncar si es muy largo para que quepa en la tabla
         if len(ruta_ids) > col_ruta:
             ruta_ids = ruta_ids[:col_ruta - 3] + "..."
 
+        # Saneo defensivo para evitar huecos visuales si llega un tipo inesperado.
+        costo = m.costo if isinstance(m.costo, int) else 0
+        pasos = m.pasos if isinstance(m.pasos, int) else 0
+        n_escaleras = m.n_escaleras if isinstance(m.n_escaleras, int) else 0
+        eficiencia = m.eficiencia if isinstance(m.eficiencia, (int, float)) else 0.0
+
         marca = "★" if m.rank == 1 else " "
         lineas.append(
-            f"  {m.rank}{marca} {ruta_ids:<{col_ruta}} {m.costo:>5}  {m.pasos:>5}  "
-            f"{m.n_escaleras:>6}  {m.eficiencia:>5.2f}  {m.salida_label}"
+            f"  {m.rank}{marca} {ruta_ids.ljust(col_ruta)} {costo:>5}  {pasos:>5}  "
+            f"{n_escaleras:>6}  {eficiencia:>5.2f}  {m.salida_label}"
         )
 
     return "\n".join(lineas)

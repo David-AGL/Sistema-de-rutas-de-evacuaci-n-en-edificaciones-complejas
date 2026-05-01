@@ -13,12 +13,16 @@ Lo que NO hace:
   - No tiene lógica de negocio
 """
 
+from datetime import datetime
+from pathlib import Path
+
 from application.find_routes import FindRoutes
 from application.block_path import block_node, unblock_node, block_edge, unblock_edge
 from application.recommend_route import recommend_route, comparar_criterios, CRITERIOS_VALIDOS
 from application.compare_routes import compare_routes, formato_tabla, formato_detalle
 from domain.graph import Graph
 from domain.evacuation_state import EvacuationState
+from infrastructure.visualization.graph_plotter import render_building_map
 
 
 def _safe_input(prompt: str) -> str | None:
@@ -67,29 +71,20 @@ def run_cli(graph: Graph, state: EvacuationState):
             _buscar_y_mostrar(graph, state, start)
 
         elif opcion == "2":
+            _mostrar_mapa(graph, state, titulo="Mapa del edificio")
+
+        elif opcion == "3":
             while True:
-                nodo_id = input("  ID del nodo a bloquear (o Enter para cancelar): ").strip()
+                nodo_raw = _safe_input("  ID del nodo a bloquear (o Enter para cancelar): ")
+                if nodo_raw is None:
+                    break
+                nodo_id = nodo_raw.strip()
                 if nodo_id == "":
                     break
                 try:
                     block_node(graph, state, nodo_id)
                     print(f"  ✔ '{nodo_id}' bloqueado. Recalcula rutas para ver el impacto.")
-                    break
-                except (KeyError, ValueError) as e:
-                    print(f"  ✘ Error: {e}")
-                    print("  Intenta de nuevo o presiona Enter para cancelar:")
-
-        elif opcion == "3":
-            while True:
-                desde = input("  ID del nodo origen de la conexión (o Enter para cancelar): ").strip()
-                if desde == "":
-                    break
-                hasta = input("  ID del nodo destino de la conexión (o Enter para cancelar): ").strip()
-                if hasta == "":
-                    break
-                try:
-                    block_edge(graph, state, desde, hasta)
-                    print(f"  ✔ Conexión '{desde}' ↔ '{hasta}' bloqueada.")
+                    _mostrar_mapa(graph, state, titulo="Mapa actualizado")
                     break
                 except (KeyError, ValueError) as e:
                     print(f"  ✘ Error: {e}")
@@ -97,50 +92,84 @@ def run_cli(graph: Graph, state: EvacuationState):
 
         elif opcion == "4":
             while True:
-                nodo_id = input("  ID del nodo a desbloquear (o Enter para cancelar): ").strip()
-                if nodo_id == "":
+                desde_raw = _safe_input("  ID del nodo origen de la conexión (o Enter para cancelar): ")
+                if desde_raw is None:
                     break
-                try:
-                    unblock_node(graph, state, nodo_id)
-                    print(f"  ✔ '{nodo_id}' desbloqueado.")
-                    break
-                except KeyError as e:
-                    print(f"  ✘ Error: {e}")
-                    print("  Intenta de nuevo o presiona Enter para cancelar:")
-
-        elif opcion == "5":
-            while True:
-                desde = input("  ID del nodo origen de la conexión (o Enter para cancelar): ").strip()
+                desde = desde_raw.strip()
                 if desde == "":
                     break
-                hasta = input("  ID del nodo destino de la conexión (o Enter para cancelar): ").strip()
+                hasta_raw = _safe_input("  ID del nodo destino de la conexión (o Enter para cancelar): ")
+                if hasta_raw is None:
+                    break
+                hasta = hasta_raw.strip()
                 if hasta == "":
                     break
                 try:
-                    unblock_edge(graph, state, desde, hasta)
-                    print(f"  ✔ Conexión '{desde}' ↔ '{hasta}' desbloqueada.")
+                    block_edge(graph, state, desde, hasta)
+                    print(f"  ✔ Conexión '{desde}' ↔ '{hasta}' bloqueada.")
+                    _mostrar_mapa(graph, state, titulo="Mapa actualizado")
                     break
                 except (KeyError, ValueError) as e:
                     print(f"  ✘ Error: {e}")
                     print("  Intenta de nuevo o presiona Enter para cancelar:")
 
+        elif opcion == "5":
+            while True:
+                nodo_raw = _safe_input("  ID del nodo a desbloquear (o Enter para cancelar): ")
+                if nodo_raw is None:
+                    break
+                nodo_id = nodo_raw.strip()
+                if nodo_id == "":
+                    break
+                try:
+                    unblock_node(graph, state, nodo_id)
+                    print(f"  ✔ '{nodo_id}' desbloqueado.")
+                    _mostrar_mapa(graph, state, titulo="Mapa actualizado")
+                    break
+                except KeyError as e:
+                    print(f"  ✘ Error: {e}")
+                    print("  Intenta de nuevo o presiona Enter para cancelar:")
+
         elif opcion == "6":
+            while True:
+                desde_raw = _safe_input("  ID del nodo origen de la conexión (o Enter para cancelar): ")
+                if desde_raw is None:
+                    break
+                desde = desde_raw.strip()
+                if desde == "":
+                    break
+                hasta_raw = _safe_input("  ID del nodo destino de la conexión (o Enter para cancelar): ")
+                if hasta_raw is None:
+                    break
+                hasta = hasta_raw.strip()
+                if hasta == "":
+                    break
+                try:
+                    unblock_edge(graph, state, desde, hasta)
+                    print(f"  ✔ Conexión '{desde}' ↔ '{hasta}' desbloqueada.")
+                    _mostrar_mapa(graph, state, titulo="Mapa actualizado")
+                    break
+                except (KeyError, ValueError) as e:
+                    print(f"  ✘ Error: {e}")
+                    print("  Intenta de nuevo o presiona Enter para cancelar:")
+
+        elif opcion == "7":
             # Cambiar de ubicación sin perder los bloqueos activos
             nueva = _pedir_ubicacion(graph, state)
             if nueva is not None:
                 start = nueva
 
-        elif opcion == "7":
+        elif opcion == "8":
             if state.has_blocks():
                 state.reset()
                 print("  ✔ Todos los bloqueos eliminados.")
             else:
                 print("  No había bloqueos activos.")
 
-        elif opcion == "8":
+        elif opcion == "9":
             _recomendar_ruta(graph, state, start)
 
-        elif opcion == "9":
+        elif opcion == "10":
             _comparar_rutas(graph, state, start)
 
         elif opcion == "0":
@@ -238,14 +267,15 @@ def _print_menu(graph: Graph, state: EvacuationState, start_id: str):
 
     print("  ══════════════════════════════════════════════════")
     print("    ➤ [1] Ver rutas de evacuación")
-    print("      [2] Bloquear nodo")
-    print("      [3] Bloquear conexión (arista)")
-    print("      [4] Desbloquear nodo")
-    print("      [5] Desbloquear conexión (arista)")
-    print("      [6] Cambiar ubicación")
-    print("      [7] Resetear todos los bloqueos")
-    print("      [8] Recomendar mejor ruta")
-    print("      [9] Comparar rutas con métricas")
+    print("      [2] Ver mapa del edificio")
+    print("      [3] Bloquear nodo")
+    print("      [4] Bloquear conexión (arista)")
+    print("      [5] Desbloquear nodo")
+    print("      [6] Desbloquear conexión (arista)")
+    print("      [7] Cambiar ubicación")
+    print("      [8] Resetear todos los bloqueos")
+    print("      [9] Recomendar mejor ruta")
+    print("      [10] Comparar rutas con métricas")
     print("      [0] Salir")
     print()
 
@@ -347,6 +377,8 @@ def _recomendar_ruta(graph: Graph, state: EvacuationState, start_id: str):
     print(f"  ║  Salida : {graph.get_node(mejor.exit_id).label}")
     print("  ╚═══════════════════════════════════════════════════════╝")
 
+    _mostrar_mapa(graph, state, ruta=mejor.path, titulo="Mapa de evacuación (ruta recomendada)")
+
     # Si hay más de una ruta, mostrar comparación entre criterios
     if len(routes) > 1:
         comparacion = comparar_criterios(routes)
@@ -434,3 +466,33 @@ def _formatear_ruta_multilinea(partes: list[str], ancho: int = 44) -> str:
             actual = f"→ {parte}"
     lineas.append(actual)
     return "\n       ".join(lineas)
+
+
+def _mostrar_mapa(graph: Graph, state: EvacuationState, ruta: list[str] | None = None, titulo: str = "Mapa"):
+    """Genera el mapa en PNG con Graphviz y reporta la ruta de salida."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_name = "ruta_recomendada" if ruta else "estado_actual"
+    filename = f"{safe_name}_{timestamp}"
+    output_dir = Path("output") / "maps"
+
+    print()
+    print(f"  {titulo}:")
+
+    try:
+        png_path = render_building_map(
+            graph=graph,
+            state=state,
+            route=ruta,
+            title=titulo,
+            output_dir=str(output_dir),
+            filename=filename,
+        )
+        print("  ✔ Mapa generado correctamente.")
+        print(f"  Archivo: {png_path}")
+        print("  Sugerencia: abre la imagen para ver el layout completo.")
+    except RuntimeError as e:
+        print(f"  ✘ No se pudo generar el mapa visual: {e}")
+        print("  Instala Graphviz de sistema y el paquete Python 'graphviz'.")
+        print("  Windows (winget): winget install Graphviz.Graphviz")
+        print("  Python: pip install graphviz")
+    print()
