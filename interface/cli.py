@@ -20,9 +20,11 @@ from application.find_routes import FindRoutes
 from application.block_path import block_node, unblock_node, block_edge, unblock_edge
 from application.recommend_route import recommend_route, comparar_criterios, CRITERIOS_VALIDOS
 from application.compare_routes import compare_routes, formato_tabla, formato_detalle
+from application.simulate_evacuation import SimulateEvacuation
 from domain.graph import Graph
 from domain.evacuation_state import EvacuationState
 from infrastructure.visualization.graph_plotter import render_building_map
+from infrastructure.visualization.cli_renderer import render_simulation_steps, render_simulation_summary
 
 
 def _safe_input(prompt: str) -> str | None:
@@ -172,6 +174,9 @@ def run_cli(graph: Graph, state: EvacuationState):
         elif opcion == "10":
             _comparar_rutas(graph, state, start)
 
+        elif opcion == "11":
+            _simular_evacuacion(graph, state)
+
         elif opcion == "0":
             break
 
@@ -276,6 +281,7 @@ def _print_menu(graph: Graph, state: EvacuationState, start_id: str):
     print("      [8] Resetear todos los bloqueos")
     print("      [9] Recomendar mejor ruta")
     print("      [10] Comparar rutas con métricas")
+    print("      [11] Simular evacuación múltiple")
     print("      [0] Salir")
     print()
 
@@ -466,6 +472,93 @@ def _formatear_ruta_multilinea(partes: list[str], ancho: int = 44) -> str:
             actual = f"→ {parte}"
     lineas.append(actual)
     return "\n       ".join(lineas)
+
+
+# ------------------------------------------------------------------ #
+# Sección: simulación de evacuación múltiple                          #
+# ------------------------------------------------------------------ #
+
+def _simular_evacuacion(graph: Graph, state: EvacuationState):
+    """
+    Solicita múltiples personas con sus ubicaciones de inicio
+    y ejecuta la simulación de evacuación simultánea,
+    mostrando el avance paso a paso y el reporte final de congestiones.
+    """
+    print()
+    print("  ══════════════════════════════════════════════════")
+    print("  SIMULACIÓN DE EVACUACIÓN MÚLTIPLE")
+    print("  Ingresa las personas a evacuar. Escribe 'listo' cuando")
+    print("  hayas agregado a todos los participantes.")
+    print("  ══════════════════════════════════════════════════")
+
+    sim = SimulateEvacuation(graph, state)
+    counter = 1
+
+    while True:
+        print()
+        nombre_raw = _safe_input(
+            f"  Nombre de persona {counter} (o 'listo' para continuar): "
+        )
+        if nombre_raw is None:
+            break
+        nombre = nombre_raw.strip()
+
+        if nombre.lower() == "listo":
+            break
+        if nombre == "":
+            continue
+
+        # Pedir ubicación para esta persona
+        while True:
+            _mostrar_nodos_disponibles(graph)
+            ubicacion_raw = _safe_input(f"  Ubicación de {nombre} (ID del nodo): ")
+            if ubicacion_raw is None:
+                break
+            ubicacion = ubicacion_raw.strip()
+
+            if ubicacion not in graph.nodes:
+                print(f"  ✘ '{ubicacion}' no existe. Intente de nuevo.")
+                continue
+            if state.is_node_blocked(ubicacion):
+                print(f"  ✘ '{ubicacion}' está bloqueado. Elija otra ubicación.")
+                continue
+
+            nodo = graph.get_node(ubicacion)
+            sim.add_person(f"P{counter}", nombre, ubicacion)
+            print(f"  ✔ {nombre} registrado en {nodo.label} [{ubicacion}]")
+            counter += 1
+            break
+
+    if not sim.personas:
+        print()
+        print("  No se agregaron personas. Simulación cancelada.")
+        return
+
+    # Elegir criterio de asignación de rutas
+    print()
+    print("  Criterio de asignación de rutas:")
+    print("    - costo  → Ruta más corta (menor costo total)")
+    print("    - pasos  → Menor número de tramos")
+    print("    - mixto  → Balance entre costo y pasos (recomendado)")
+    print()
+    criterio_raw = _safe_input("  Criterio (Enter = 'costo'): ")
+    criterio = (criterio_raw or "").strip().lower() or "costo"
+    if criterio not in ["costo", "pasos", "mixto"]:
+        print(f"  ✘ Criterio inválido, se usará 'costo'.")
+        criterio = "costo"
+
+    print()
+    print("  Ejecutando simulación...")
+    result = sim.run(criterio=criterio)
+
+    # Mostrar evolución paso a paso
+    print()
+    print("  EVOLUCIÓN PASO A PASO:")
+    print(render_simulation_steps(result, graph))
+
+    # Mostrar reporte final
+    print()
+    print(render_simulation_summary(result, graph))
 
 
 def _mostrar_mapa(graph: Graph, state: EvacuationState, ruta: list[str] | None = None, titulo: str = "Mapa"):

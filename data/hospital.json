@@ -1,0 +1,55 @@
+{
+  "building": {
+    "name": "Hospital General",
+    "levels": 3
+  },
+  "nodes": [
+    { "id": "URG",    "label": "Urgencias",                        "type": "room",      "level": 1 },
+    { "id": "RECEP",  "label": "Recepción",                        "type": "room",      "level": 1 },
+    { "id": "P1H",    "label": "Pasillo Central - Piso 1",         "type": "hallway",   "level": 1 },
+    { "id": "E1H",    "label": "Escalera Principal",               "type": "staircase", "level": 1 },
+    { "id": "E2H",    "label": "Escalera de Emergencia",           "type": "staircase", "level": 1 },
+    { "id": "S1H",    "label": "Salida Principal",                 "type": "exit",      "level": 1 },
+    { "id": "S2H",    "label": "Salida de Emergencia",             "type": "exit",      "level": 1 },
+
+    { "id": "UCI",    "label": "Unidad de Cuidados Intensivos",    "type": "room",      "level": 2 },
+    { "id": "HAB201", "label": "Habitación 201",                   "type": "room",      "level": 2 },
+    { "id": "HAB202", "label": "Habitación 202",                   "type": "room",      "level": 2 },
+    { "id": "P2H",    "label": "Pasillo Central - Piso 2",         "type": "hallway",   "level": 2 },
+    { "id": "E1H_2",  "label": "Escalera Principal (Piso 2)",      "type": "staircase", "level": 2 },
+    { "id": "E2H_2",  "label": "Escalera de Emergencia (Piso 2)",  "type": "staircase", "level": 2 },
+
+    { "id": "QUIR",   "label": "Quirófano",                        "type": "room",      "level": 3 },
+    { "id": "RECUP",  "label": "Sala de Recuperación",             "type": "room",      "level": 3 },
+    { "id": "LAB",    "label": "Laboratorio",                      "type": "room",      "level": 3 },
+    { "id": "P3H",    "label": "Pasillo Central - Piso 3",         "type": "hallway",   "level": 3 },
+    { "id": "E1H_3",  "label": "Escalera Principal (Piso 3)",      "type": "staircase", "level": 3 },
+    { "id": "E2H_3",  "label": "Escalera de Emergencia (Piso 3)",  "type": "staircase", "level": 3 }
+  ],
+  "edges": [
+    { "from": "URG",    "to": "P1H",   "weight": 1, "description": "Urgencias al pasillo central" },
+    { "from": "RECEP",  "to": "P1H",   "weight": 1, "description": "Recepción al pasillo central" },
+    { "from": "P1H",    "to": "E1H",   "weight": 1, "description": "Pasillo a escalera principal" },
+    { "from": "P1H",    "to": "E2H",   "weight": 2, "description": "Pasillo a escalera de emergencia" },
+    { "from": "P1H",    "to": "S1H",   "weight": 1, "description": "Pasillo a salida principal" },
+    { "from": "E2H",    "to": "S2H",   "weight": 1, "description": "Escalera emergencia a salida de emergencia" },
+
+    { "from": "E1H",   "to": "E1H_2",  "weight": 3, "description": "Escalera principal piso 1 a piso 2" },
+    { "from": "E2H",   "to": "E2H_2",  "weight": 3, "description": "Escalera emergencia piso 1 a piso 2" },
+
+    { "from": "UCI",    "to": "P2H",   "weight": 1, "description": "UCI al pasillo piso 2" },
+    { "from": "HAB201", "to": "P2H",   "weight": 1, "description": "Habitación 201 al pasillo piso 2" },
+    { "from": "HAB202", "to": "P2H",   "weight": 1, "description": "Habitación 202 al pasillo piso 2" },
+    { "from": "P2H",    "to": "E1H_2", "weight": 1, "description": "Pasillo piso 2 a escalera principal" },
+    { "from": "P2H",    "to": "E2H_2", "weight": 2, "description": "Pasillo piso 2 a escalera emergencia" },
+
+    { "from": "E1H_2",  "to": "E1H_3", "weight": 3, "description": "Escalera principal piso 2 a piso 3" },
+    { "from": "E2H_2",  "to": "E2H_3", "weight": 3, "description": "Escalera emergencia piso 2 a piso 3" },
+
+    { "from": "QUIR",   "to": "P3H",   "weight": 2, "description": "Quirófano al pasillo piso 3" },
+    { "from": "RECUP",  "to": "P3H",   "weight": 1, "description": "Recuperación al pasillo piso 3" },
+    { "from": "LAB",    "to": "P3H",   "weight": 1, "description": "Laboratorio al pasillo piso 3" },
+    { "from": "P3H",    "to": "E1H_3", "weight": 1, "description": "Pasillo piso 3 a escalera principal" },
+    { "from": "P3H",    "to": "E2H_3", "weight": 2, "description": "Pasillo piso 3 a escalera emergencia" }
+  ]
+}

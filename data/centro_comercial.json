@@ -1,0 +1,45 @@
+{
+  "building": {
+    "name": "Centro Comercial Plaza Mayor",
+    "levels": 2
+  },
+  "nodes": [
+    { "id": "TEND_A",  "label": "Tienda A",                       "type": "room",      "level": 1 },
+    { "id": "TEND_B",  "label": "Tienda B",                       "type": "room",      "level": 1 },
+    { "id": "PATIO",   "label": "Patio de Comidas",               "type": "room",      "level": 1 },
+    { "id": "COR1",    "label": "Corredor Principal - Piso 1",    "type": "hallway",   "level": 1 },
+    { "id": "COR_E",   "label": "Corredor Este - Piso 1",         "type": "hallway",   "level": 1 },
+    { "id": "ESC1",    "label": "Escalera Mecánica",              "type": "staircase", "level": 1 },
+    { "id": "ESC2",    "label": "Escalera de Emergencia",         "type": "staircase", "level": 1 },
+    { "id": "S1_CC",   "label": "Salida Principal",               "type": "exit",      "level": 1 },
+    { "id": "S2_CC",   "label": "Salida Este",                    "type": "exit",      "level": 1 },
+
+    { "id": "TEND_C",  "label": "Tienda C",                       "type": "room",      "level": 2 },
+    { "id": "TEND_D",  "label": "Tienda D",                       "type": "room",      "level": 2 },
+    { "id": "CINE",    "label": "Cine",                           "type": "room",      "level": 2 },
+    { "id": "COR2",    "label": "Corredor Principal - Piso 2",    "type": "hallway",   "level": 2 },
+    { "id": "COR_S2",  "label": "Corredor Sur - Piso 2",          "type": "hallway",   "level": 2 },
+    { "id": "ESC1_2",  "label": "Escalera Mecánica (Piso 2)",     "type": "staircase", "level": 2 },
+    { "id": "ESC2_2",  "label": "Escalera de Emergencia (Piso 2)","type": "staircase", "level": 2 }
+  ],
+  "edges": [
+    { "from": "TEND_A", "to": "COR1",   "weight": 1, "description": "Tienda A al corredor principal" },
+    { "from": "TEND_B", "to": "COR1",   "weight": 1, "description": "Tienda B al corredor principal" },
+    { "from": "PATIO",  "to": "COR_E",  "weight": 1, "description": "Patio de comidas al corredor este" },
+    { "from": "COR1",   "to": "COR_E",  "weight": 2, "description": "Corredor principal al corredor este" },
+    { "from": "COR1",   "to": "ESC1",   "weight": 1, "description": "Corredor principal a escalera mecánica" },
+    { "from": "COR_E",  "to": "ESC2",   "weight": 1, "description": "Corredor este a escalera de emergencia" },
+    { "from": "COR1",   "to": "S1_CC",  "weight": 1, "description": "Corredor principal a salida principal" },
+    { "from": "COR_E",  "to": "S2_CC",  "weight": 1, "description": "Corredor este a salida este" },
+
+    { "from": "ESC1",   "to": "ESC1_2", "weight": 2, "description": "Escalera mecánica piso 1 a piso 2" },
+    { "from": "ESC2",   "to": "ESC2_2", "weight": 2, "description": "Escalera emergencia piso 1 a piso 2" },
+
+    { "from": "TEND_C", "to": "COR2",   "weight": 1, "description": "Tienda C al corredor piso 2" },
+    { "from": "TEND_D", "to": "COR2",   "weight": 1, "description": "Tienda D al corredor piso 2" },
+    { "from": "CINE",   "to": "COR_S2", "weight": 2, "description": "Cine al corredor sur piso 2" },
+    { "from": "COR2",   "to": "COR_S2", "weight": 2, "description": "Corredor principal al corredor sur piso 2" },
+    { "from": "COR2",   "to": "ESC1_2", "weight": 1, "description": "Corredor piso 2 a escalera mecánica" },
+    { "from": "COR_S2", "to": "ESC2_2", "weight": 1, "description": "Corredor sur piso 2 a escalera emergencia" }
+  ]
+}
