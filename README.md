@@ -57,7 +57,7 @@ Descarga el instalador desde [graphviz.org/download](https://graphviz.org/downlo
 ### Paso 1 — Clona o descarga el repositorio
 
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/David-AGL/Sistema-de-rutas-de-evacuaci-n-en-edificaciones-complejas.git
 cd Sistema-de-rutas-de-evacuaci-n-en-edificaciones-complejas
 ```
 
